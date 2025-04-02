@@ -8,17 +8,53 @@
   <style>
     body {
       background-color: #f0f8ff;
+      transition: background-color 0.3s;
     }
+    
+    body.dark-mode {
+      background-color: #212529;
+      color: #f8f9fa;
+    }
+    
+    body.dark-mode .card {
+      background-color: #343a40;
+    }
+    
+    body.dark-mode .table {
+      color: #f8f9fa;
+    }
+    
+    body.dark-mode .table-light {
+      background-color: #495057;
+      color: #f8f9fa;
+    }
+    
+    body.dark-mode .text-muted {
+      color: #adb5bd !important;
+    }
+    
     .ice-icon {
       font-size: 3rem;
     }
+    
     .resultado {
       font-size: 1.3rem;
       font-weight: 600;
     }
+    
+    .mode-toggle {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
   </style>
 </head>
 <body class="d-flex align-items-center" style="min-height: 100vh;">
+  <!-- Botón de cambio de modo -->
+  <div class="mode-toggle" id="modeToggle">🌙</div>
+
   <div class="container">
     <div class="row justify-content-center mb-4">
       <div class="col text-center">
@@ -27,7 +63,6 @@
         <p class="text-muted">Calculadora simple de palés y sacos</p>
       </div>
     </div>
-
     <div class="row justify-content-center">
       <div class="col-md-7">
         <div class="card shadow-sm border-0">
@@ -54,10 +89,8 @@
                   </tr>
                 </tbody>
               </table>
-
               <button type="submit" class="btn btn-primary w-100">Calcular producción</button>
             </form>
-
             <div id="resultado" class="resultado text-success text-center mt-4" style="display:none;"></div>
           </div>
         </div>
@@ -66,28 +99,51 @@
   </div>
 
   <script>
+    // Modo oscuro
+    const modeToggle = document.getElementById('modeToggle');
+    const body = document.body;
+    
+    // Recuperar modo guardado
+    if (localStorage.getItem('darkMode') === 'true') {
+      body.classList.add('dark-mode');
+      modeToggle.textContent = '☀️';
+    }
+    
+    // Cambiar modo al hacer clic
+    modeToggle.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+      
+      if (body.classList.contains('dark-mode')) {
+        modeToggle.textContent = '☀️';
+        localStorage.setItem('darkMode', 'true');
+      } else {
+        modeToggle.textContent = '🌙';
+        localStorage.setItem('darkMode', 'false');
+      }
+    });
+    
+    // Cálculo de producción (sin cambios)
     document.getElementById("formulario").addEventListener("submit", function (e) {
       e.preventDefault();
-
+      
       const pAyer = parseInt(document.getElementById("pAyer").value);
       const sAyer = parseInt(document.getElementById("sAyer").value);
       const pHoy = parseInt(document.getElementById("pHoy").value);
       const sHoy = parseInt(document.getElementById("sHoy").value);
-
+      
       let palets;
       if (pHoy >= pAyer) {
         palets = pHoy - pAyer;
       } else {
         palets = (100 - pAyer) + pHoy;
       }
-
+      
       const totalSacos = (palets * 80) + (sHoy - sAyer);
-
       const paletsFinales = Math.floor(totalSacos / 80);
       const sacosFinales = totalSacos % 80;
-
+      
       const resultado = `Hoy se han producido <span class="text-primary">${paletsFinales} palés</span> y <span class="text-primary">${sacosFinales} sacos</span>.`;
-
+      
       const resultadoDiv = document.getElementById("resultado");
       resultadoDiv.innerHTML = resultado;
       resultadoDiv.style.display = "block";
