@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Producción diaria</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f0f8ff;
+    }
+    .ice-icon {
+      font-size: 3rem;
+    }
+    .resultado {
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="d-flex align-items-center" style="min-height: 100vh;">
+  <div class="container">
+    <div class="row justify-content-center mb-4">
+      <div class="col text-center">
+        <div class="ice-icon">🧊🧊</div>
+        <h1 class="mt-2">Producción diaria</h1>
+        <p class="text-muted">Calculadora simple de palés y sacos</p>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-md-7">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <form id="formulario">
+              <table class="table table-bordered align-middle text-center mb-4">
+                <thead class="table-light">
+                  <tr>
+                    <th>Día</th>
+                    <th>Palé</th>
+                    <th>Sacos</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Ayer</th>
+                    <td><input type="number" class="form-control" id="pAyer" min="1" max="100" required></td>
+                    <td><input type="number" class="form-control" id="sAyer" min="0" max="79" required></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Hoy</th>
+                    <td><input type="number" class="form-control" id="pHoy" min="1" max="100" required></td>
+                    <td><input type="number" class="form-control" id="sHoy" min="0" max="79" required></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <button type="submit" class="btn btn-primary w-100">Calcular producción</button>
+            </form>
+
+            <div id="resultado" class="resultado text-success text-center mt-4" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("formulario").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const pAyer = parseInt(document.getElementById("pAyer").value);
+      const sAyer = parseInt(document.getElementById("sAyer").value);
+      const pHoy = parseInt(document.getElementById("pHoy").value);
+      const sHoy = parseInt(document.getElementById("sHoy").value);
+
+      let palets;
+      if (pHoy >= pAyer) {
+        palets = pHoy - pAyer;
+      } else {
+        palets = (100 - pAyer) + pHoy;
+      }
+
+      const totalSacos = (palets * 80) + (sHoy - sAyer);
+
+      const paletsFinales = Math.floor(totalSacos / 80);
+      const sacosFinales = totalSacos % 80;
+
+      const resultado = `Hoy se han producido <span class="text-primary">${paletsFinales} palés</span> y <span class="text-primary">${sacosFinales} sacos</span>.`;
+
+      const resultadoDiv = document.getElementById("resultado");
+      resultadoDiv.innerHTML = resultado;
+      resultadoDiv.style.display = "block";
+    });
+  </script>
+</body>
+</html>
