@@ -49,6 +49,17 @@
       cursor: pointer;
       font-size: 1.5rem;
     }
+    
+    .resultados-detalle {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      background-color: rgba(0,123,255,0.1);
+    }
+    
+    body.dark-mode .resultados-detalle {
+      background-color: rgba(0,123,255,0.2);
+    }
   </style>
 </head>
 <body class="d-flex align-items-center" style="min-height: 100vh;">
@@ -60,7 +71,7 @@
       <div class="col text-center">
         <div class="ice-icon">🧊🧊</div>
         <h1 class="mt-2">Producción diaria</h1>
-        <p class="text-muted">Calculadora simple de palés y sacos</p>
+        <p class="text-muted">Calculadora de palés, sacos, bolsas y kilogramos</p>
       </div>
     </div>
     <div class="row justify-content-center">
@@ -92,6 +103,28 @@
               <button type="submit" class="btn btn-primary w-100">Calcular producción</button>
             </form>
             <div id="resultado" class="resultado text-success text-center mt-4" style="display:none;"></div>
+            <div id="resultados-detalle" class="resultados-detalle" style="display:none;">
+              <table class="table table-sm">
+                <tbody>
+                  <tr>
+                    <th>Palés:</th>
+                    <td id="detail-palets"></td>
+                  </tr>
+                  <tr>
+                    <th>Sacos:</th>
+                    <td id="detail-sacos"></td>
+                  </tr>
+                  <tr>
+                    <th>Bolsas:</th>
+                    <td id="detail-bolsas"></td>
+                  </tr>
+                  <tr>
+                    <th>Total kg:</th>
+                    <td id="detail-kg"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -122,15 +155,17 @@
       }
     });
     
-    // Cálculo de producción (sin cambios)
+    // Cálculo de producción (con nuevas funcionalidades)
     document.getElementById("formulario").addEventListener("submit", function (e) {
       e.preventDefault();
       
+      // Obtener valores
       const pAyer = parseInt(document.getElementById("pAyer").value);
       const sAyer = parseInt(document.getElementById("sAyer").value);
       const pHoy = parseInt(document.getElementById("pHoy").value);
       const sHoy = parseInt(document.getElementById("sHoy").value);
       
+      // Calcular palés producidos
       let palets;
       if (pHoy >= pAyer) {
         palets = pHoy - pAyer;
@@ -138,15 +173,27 @@
         palets = (100 - pAyer) + pHoy;
       }
       
+      // Calcular producción total
       const totalSacos = (palets * 80) + (sHoy - sAyer);
       const paletsFinales = Math.floor(totalSacos / 80);
       const sacosFinales = totalSacos % 80;
       
-      const resultado = `Hoy se han producido <span class="text-primary">${paletsFinales} palés</span> y <span class="text-primary">${sacosFinales} sacos</span>.`;
+      // Nuevos cálculos
+      const totalBolsas = totalSacos * 5; // 5 bolsas por saco
+      const totalKg = totalBolsas * 2;    // 2 kg por bolsa
       
+      // Mostrar resultado principal
+      const resultado = `Hoy se han producido <span class="text-primary">${paletsFinales} palés</span> y <span class="text-primary">${sacosFinales} sacos</span>.`;
       const resultadoDiv = document.getElementById("resultado");
       resultadoDiv.innerHTML = resultado;
       resultadoDiv.style.display = "block";
+      
+      // Mostrar detalles adicionales
+      document.getElementById("detail-palets").textContent = paletsFinales;
+      document.getElementById("detail-sacos").textContent = sacosFinales;
+      document.getElementById("detail-bolsas").textContent = totalBolsas.toLocaleString() + " bolsas";
+      document.getElementById("detail-kg").textContent = totalKg.toLocaleString() + " kg";
+      document.getElementById("resultados-detalle").style.display = "block";
     });
   </script>
 </body>
